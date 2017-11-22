@@ -1,0 +1,11 @@
+---
+# defaults file for zabbix-agent
+
+# Simple placeholder to allow other roles to detect this role
+zabbix_agent__role: True
+
+# Enable facts deploiement
+zabbix_agent__facts: False
+
+# Which version to install (if it is possible)
+zabbix_agent__version: 3.4

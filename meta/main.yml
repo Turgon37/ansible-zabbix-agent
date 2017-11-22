@@ -1,0 +1,19 @@
+galaxy_info:
+  author: Pierre GINDRAUD
+  description: This role configure Zabbix agent on host
+  license: MIT
+  min_ansible_version: 2.4
+  platforms:
+    - name: Debian
+      versions:
+        - 9
+        - 8
+    - name: CentOS
+      versions:
+        - 7
+  galaxy_tags: []
+
+dependencies:
+  - role: zabbix-common
+    zabbix_common__version: '{{ zabbix_agent__version }}'
+    zabbix_common__packages_name: "zabbix-agent"
