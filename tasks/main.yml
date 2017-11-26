@@ -18,5 +18,8 @@
 - import_tasks: configure.yml
   tags: ['zabbix-agent', 'zabbix-agent-configure']
 
+- import_tasks: service.yml
+  tags: ['zabbix-agent', 'zabbix-agent-service']
+
 - include_tasks: facts.yml
   when: zabbix_agent__facts|bool

@@ -1,0 +1,7 @@
+---
+
+- name: Ensure zabbix agent is started and enabled on boot
+  service:
+    name:    '{{ zabbix_agent__service_name }}'
+    enabled: yes
+    state:   started
