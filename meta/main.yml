@@ -17,3 +17,5 @@ dependencies:
   - role: zabbix-common
     zabbix_common__version: '{{ zabbix_agent__version }}'
     zabbix_common__packages_name: "zabbix-agent"
+    zabbix_common__service_name: '{{ zabbix_agent__service_name }}'
+    zabbix_common__service_handler: restart-zabbix-agent

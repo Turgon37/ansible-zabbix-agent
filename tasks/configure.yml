@@ -1,1 +1,10 @@
 ---
+
+- name: Update main configuration file
+  template:
+    src:   'zabbix_agentd.conf.j2'
+    dest:  '{{ zabbix_agent__conf_file }}'
+    owner: root
+    group: '{{ zabbix_common__service_group }}'
+    mode:  0644
+  notify: [ 'restart-zabbix-agent' ]

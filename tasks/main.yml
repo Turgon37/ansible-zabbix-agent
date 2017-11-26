@@ -12,6 +12,9 @@
       skip: true
   tags: ['always']
 
+- import_tasks: init.yml
+  tags: ['always']
+
 - import_tasks: configure.yml
   tags: ['zabbix-agent', 'zabbix-agent-configure']
 

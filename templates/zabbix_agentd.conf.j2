@@ -1,0 +1,37 @@
+#
+# {{ ansible_managed }}
+#
+
+
+############ GENERAL PARAMETERS #################
+PidFile={{ zabbix_agent__pid_file }}
+
+AllowRoot=0
+User={{ zabbix_common__service_user }}
+
+LogType={{ zabbix_agent__log_type }}
+LogFile={{ zabbix_agent__log_file }}
+LogFileSize={{ zabbix_agent__log_size|int }}
+
+
+############ NETWORK PARAMETERS #################
+ListenIP={{ zabbix_agent__listen_ip }}
+ListenPort={{ zabbix_agent__listen_port|int }}
+{% if zabbix_agent__source_ip is defined %}
+SourceIP={{ zabbix_agent__source_ip }}
+{% endif %}
+
+##### Passive checks related
+{% if zabbix_agent__server is defined %}
+Server={{ zabbix_agent__server if zabbix_agent__server is string else zabbix_agent__server|join(',') }}
+{% endif %}
+
+##### Active checks related
+{% if zabbix_agent__server_active is defined %}
+ServerActive={{ zabbix_agent__server_active if zabbix_agent__server_active is string else zabbix_agent__server_active|join(',') }}
+{% endif %}
+
+Hostname={{ zabbix_agent__hostname }}
+{% if zabbix_agent__hostname is not defined %}
+HostnameItem={{ zabbix_agent__hostname_item }}
+{% endif %}

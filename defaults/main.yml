@@ -9,3 +9,76 @@ zabbix_agent__facts: False
 
 # Which version to install (if it is possible)
 zabbix_agent__version: 3.4
+
+# Name of zabbix service
+zabbix_agent__service_name: zabbix-agent
+
+# Main configuration file
+zabbix_agent__conf_file: '{{ zabbix_common__conf_directory }}/zabbix_agentd.conf'
+
+
+############ GENERAL PARAMETERS #################
+### Option: PidFile
+#	Name of PID file.
+# PidFile=/tmp/zabbix_agent.pid
+zabbix_agent__pid_file: /var/run/zabbix/zabbix_agent.pid
+
+# LogType
+#	Specifies where log messages are written to:
+#		system  - syslog
+#		file    - file specified with LogFile parameter
+#		console - standard output
+zabbix_agent__log_type: file
+
+# LogFile : Log file name for LogType 'file' parameter.
+zabbix_agent__log_file: '{{ zabbix_common__log_directory }}/zabbix_agent.log'
+
+# LogFileSize
+#	Maximum size of log file in MB.
+#	0 - disable automatic log rotation.
+zabbix_agent__log_size: 1
+
+
+############ NETWORK PARAMETERS #################
+# ListenIP
+#	List of comma delimited IP addresses that the agent should listen on.
+#	First IP address is sent to Zabbix server if connecting to it to retrieve list of active checks.
+zabbix_agent__listen_ip: 0.0.0.0
+
+# ListenPort
+#	Agent will listen on this port for connections from the server.
+zabbix_agent__listen_port: 10050
+
+# SourceIP
+#	Source IP address for outgoing connections.
+#zabbix_agent__source_ip:
+
+##### Passive checks related
+# Server
+#	List of comma delimited IP addresses, optionally in CIDR notation, or hostnames of Zabbix servers.
+#	Incoming connections will be accepted only from the hosts listed here.
+#	If IPv6 support is enabled then '127.0.0.1', '::127.0.0.1', '::ffff:127.0.0.1' are treated equally and '::/0' will allow any IPv4 or IPv6 address.
+#	'0.0.0.0/0' can be used to allow any IPv4 address.
+#	Example: Server=127.0.0.1,192.168.1.0/24,::1,2001:db8::/32,zabbix.domain
+#zabbix_agent__server:
+
+##### Active checks related
+# ServerActive
+#	List of comma delimited IP:port (or hostname:port) pairs of Zabbix servers for active checks.
+#	If port is not specified, default port is used.
+#	IPv6 addresses must be enclosed in square brackets if port for that host is specified.
+#	If port is not specified, square brackets for IPv6 addresses are optional.
+#	If this parameter is not specified, active checks are disabled.
+#	Example: ServerActive=127.0.0.1:20051,zabbix.domain,[::1]:30051,::1,[12fc::1]
+#zabbix_agent__server_active:
+
+# Hostname
+#	Unique, case sensitive hostname.
+#	Required for active checks and must match hostname as configured on the server.
+#	Value is acquired from HostnameItem if undefined.
+zabbix_agent__hostname: '{{ ansible_fqdn }}'
+
+# HostnameItem
+#	Item used for generating Hostname if it is undefined. Ignored if Hostname is defined.
+#	Does not support UserParameters or aliases.
+zabbix_agent__hostname_item: system.hostname

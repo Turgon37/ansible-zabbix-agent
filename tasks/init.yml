@@ -1,0 +1,7 @@
+---
+
+- name: Assert required variables
+  assert:
+    that:
+      - 1024 <= zabbix_agent__listen_port and zabbix_agent__listen_port <= 32767
+      - 0 <= zabbix_agent__log_size and zabbix_agent__log_size <= 1024
