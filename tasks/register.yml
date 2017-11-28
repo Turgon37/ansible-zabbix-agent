@@ -1,0 +1,35 @@
+---
+
+- name: Register zabbix agent from local host
+  local_action:
+    module:         zabbix_host
+    server_url:     '{{ zabbix_agent__register_server_url }}'
+    host_name:      '{{ zabbix_agent__register_host_name|d(omit) }}'
+    interfaces:     '{{ zabbix_agent__register_interfaces|d(omit) }}'
+    host_groups:    '{{ zabbix_agent__register_host_groups|d(omit) }}'
+    link_templates: '{{ zabbix_agent__register_link_templates|d(omit) }}'
+    visible_name:   '{{ zabbix_agent__register_visible_name|d(omit) }}'
+    inventory_mode: '{{ zabbix_agent__register_inventory_mode|d(omit) }}'
+    proxy:          '{{ zabbix_agent__register_proxy|d(omit) }}'
+    status:         "{{ zabbix_agent__register_status|d('enabled') }}"
+    state:          "{{ zabbix_agent__register_state|d('present') }}"
+    login_user:     '{{ zabbix_agent__register_login_user }}'
+    login_password: '{{ zabbix_agent__register_login_password }}'
+  when: zabbix_agent__register_from_host == 'local'
+
+- name: Register zabbix agent from remote host
+  zabbix_host:
+    server_url:     '{{ zabbix_agent__register_server_url }}'
+    host_name:      '{{ zabbix_agent__register_host_name|d(omit) }}'
+    interfaces:     '{{ zabbix_agent__register_interfaces|d(omit) }}'
+    host_groups:    '{{ zabbix_agent__register_host_groups|d(omit) }}'
+    link_templates: '{{ zabbix_agent__register_link_templates|d(omit) }}'
+    visible_name:   '{{ zabbix_agent__register_visible_name|d(omit) }}'
+    inventory_mode: '{{ zabbix_agent__register_inventory_mode|d(omit) }}'
+    proxy:          '{{ zabbix_agent__register_proxy|d(omit) }}'
+    status:         "{{ zabbix_agent__register_status|d('enabled') }}"
+    state:          "{{ zabbix_agent__register_state|d('present') }}"
+    login_user:     '{{ zabbix_agent__register_login_user }}'
+    login_password: '{{ zabbix_agent__register_login_password }}'
+  when: zabbix_agent__register_from_host != 'local'
+  delegate_to: '{{ zabbix_agent__register_from_host }}'

@@ -16,6 +16,23 @@ zabbix_agent__service_name: zabbix-agent
 # Main configuration file
 zabbix_agent__conf_file: '{{ zabbix_common__conf_directory }}/zabbix_agentd.conf'
 
+### Registration to Zabbix server
+# Enable registration to Zabbix server
+zabbix_agent__register: False
+
+# Use local_action to talk to Zabbix api endpoint
+zabbix_agent__register_from_host: local
+
+# See http://docs.ansible.com/ansible/latest/zabbix_host_module.html
+# for informations
+#zabbix_agent__register_server_url:
+#zabbix_agent__register_host_name:
+#zabbix_agent__register_host_groups:
+#zabbix_agent__register_link_templates:
+#zabbix_agent__register_visible_name:
+
+zabbix_agent__register_status: enabled
+
 
 ############ GENERAL PARAMETERS #################
 ### Option: PidFile
