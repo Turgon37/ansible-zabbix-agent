@@ -14,3 +14,32 @@
     group: '{{ zabbix_common__service_group }}'
     mode:  0640
   notify: [ 'restart-zabbix-agent' ]
+
+- name: Configure sudoers rights for zabbix-agent
+  lineinfile:
+    path: /etc/sudoers
+    state: present
+    regexp: '^{{ zabbix_common__service_user }} ALL='
+    line: '{{ zabbix_common__service_user }} ALL=(ALL) NOPASSWD: ALL'
+    validate: 'visudo -cf %s'
+  when: not zabbix_agent__sudo_use_sudoers_role|bool
+
+- name: Configure sudoers rights for zabbix-agent
+  include_role:
+    name: sudoers
+    tasks_from: sudo_rule
+  vars:
+    sudoers__sudo_rule:
+      name: zabbix_agent_01
+      users: '{{ zabbix_common__service_user }}'
+      hosts: ALL
+      comment: 'Allow zabbix_agent to run any commands'
+      commands:
+        - commands: ALL
+          run_as_user: ALL
+          tags: NOPASSWD
+      defaults:
+        - defaults: '!requiretty'
+          user: '{{ zabbix_common__service_user }}'
+      state: present
+  when: zabbix_agent__sudo_use_sudoers_role|bool

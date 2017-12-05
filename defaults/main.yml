@@ -19,6 +19,9 @@ zabbix_agent__conf_file: '{{ zabbix_common__conf_directory }}/zabbix_agentd.conf
 # Main include configuration directory
 zabbix_agent__conf_include_directory: '{{ zabbix_common__conf_directory }}/zabbix_agentd.conf.d'
 
+# Use special type provided by sudoers role to register sudo rights
+zabbix_agent__sudo_use_sudoers_role: False
+
 ### Registration to Zabbix server
 # Enable registration to Zabbix server
 zabbix_agent__register: False
