@@ -3,8 +3,8 @@
 - name: Make sure the configuration include directory exists
   file:
     path:  '{{ zabbix_agent__conf_include_directory }}'
-    state: directory
     mode:  0755
+    state: directory
 
 - name: Update main configuration file
   template:
@@ -12,5 +12,5 @@
     dest:  '{{ zabbix_agent__conf_file }}'
     owner: root
     group: '{{ zabbix_common__service_group }}'
-    mode:  0644
+    mode:  0640
   notify: [ 'restart-zabbix-agent' ]
