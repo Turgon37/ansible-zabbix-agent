@@ -6,6 +6,14 @@
 ############ GENERAL PARAMETERS #################
 PidFile={{ zabbix_agent__pid_file }}
 
+Include={{ zabbix_agent__conf_include_directory }}/*.conf
+{% if zabbix_common__userparameter_directory is defined %}
+Include={{ zabbix_common__userparameter_directory }}/*.conf
+{% endif %}
+{% for item in zabbix_agent__conf_includes %}
+Include={{ item }}
+{% endfor %}
+
 AllowRoot=0
 User={{ zabbix_common__service_user }}
 

@@ -16,6 +16,9 @@ zabbix_agent__service_name: zabbix-agent
 # Main configuration file
 zabbix_agent__conf_file: '{{ zabbix_common__conf_directory }}/zabbix_agentd.conf'
 
+# Main include configuration directory
+zabbix_agent__conf_include_directory: '{{ zabbix_common__conf_directory }}/zabbix_agentd.conf.d'
+
 ### Registration to Zabbix server
 # Enable registration to Zabbix server
 zabbix_agent__register: False
@@ -39,6 +42,10 @@ zabbix_agent__register_status: enabled
 #	Name of PID file.
 # PidFile=/tmp/zabbix_agent.pid
 zabbix_agent__pid_file: /var/run/zabbix/zabbix_agent.pid
+
+### Option: Include
+#	You may include individual files or all files in a directory in the configuration file.
+zabbix_agent__conf_includes: []
 
 # LogType
 #	Specifies where log messages are written to:

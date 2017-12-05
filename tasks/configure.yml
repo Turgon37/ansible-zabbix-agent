@@ -1,5 +1,11 @@
 ---
 
+- name: Make sure the configuration include directory exists
+  file:
+    path:  '{{ zabbix_agent__conf_include_directory }}'
+    state: directory
+    mode:  0755
+
 - name: Update main configuration file
   template:
     src:   'zabbix_agentd.conf.j2'
