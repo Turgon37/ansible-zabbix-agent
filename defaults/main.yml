@@ -44,7 +44,7 @@ zabbix_agent__register_status: enabled
 ### Option: PidFile
 #	Name of PID file.
 # PidFile=/tmp/zabbix_agent.pid
-zabbix_agent__pid_file: /var/run/zabbix/zabbix_agent.pid
+zabbix_agent__pid_file: /var/run/zabbix/zabbix_agentd.pid
 
 ### Option: Include
 #	You may include individual files or all files in a directory in the configuration file.
