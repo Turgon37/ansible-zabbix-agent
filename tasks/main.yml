@@ -21,10 +21,13 @@
 - import_tasks: service.yml
   tags: ['zabbix-agent', 'zabbix-agent-service']
 
-- include_tasks: register.yml
-  when: zabbix_agent__register|bool
-  tags: ['zabbix-agent', 'zabbix-agent-register']
+- import_tasks: monitoring-zabbix.yml
+  tags: ['zabbix-agent', 'zabbix-agent-monitoring']
 
 - include_tasks: facts.yml
   when: zabbix_agent__facts|bool
   tags: ['zabbix-agent', 'zabbix-agent-facts']
+
+- include_tasks: register.yml
+  when: zabbix_agent__register|bool
+  tags: ['zabbix-agent', 'zabbix-agent-register']

@@ -1,0 +1,21 @@
+---
+
+- name: Configure zabbix userparameters
+  include_role:
+    name: zabbix-common
+    tasks_from: userparameter
+  vars:
+    zabbix_common__userparameter:
+      name: common
+      userparameter:
+        - key: conntrack_count
+          command: >
+            /bin/bash -c "if [ -f /proc/net/ip_conntrack ]; then wc -l /proc/net/ip_conntrack | awk '{print $1}'; else echo -n 0; fi"
+          sudo: True
+          comment: 'fetch current conntrack size'
+        - key: conntrack_max
+          command: >
+            /bin/bash -c "VALUE=$(/sbin/sysctl net.ipv4.netfilter.ip_conntrack_max --ignore | awk '{print $3}'); echo ${VALUE:-0}"
+          sudo: True
+          comment: 'fetch maximum size of conntrack'
+      state: present
