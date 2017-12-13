@@ -6,6 +6,14 @@
     mode:  0755
     state: directory
 
+- name: Create custom scripts directory
+  file:
+    path:  '{{ zabbix_agent__custom_scripts_directory }}'
+    owner: root
+    group: root
+    mode:  0755
+    state: directory
+
 - name: Update main configuration file
   template:
     src:   'zabbix_agentd.conf.j2'
