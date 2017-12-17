@@ -20,7 +20,7 @@ User={{ zabbix_common__service_user }}
 LogType={{ zabbix_agent__log_type }}
 LogFile={{ zabbix_agent__log_file }}
 LogFileSize={{ zabbix_agent__log_size|int }}
-
+DebugLevel={{zabbix_agent__debug_level }}
 
 ############ NETWORK PARAMETERS #################
 ListenIP={{ zabbix_agent__listen_ip }}
@@ -43,3 +43,12 @@ Hostname={{ zabbix_agent__hostname }}
 {% if zabbix_agent__hostname is not defined %}
 HostnameItem={{ zabbix_agent__hostname_item }}
 {% endif %}
+
+
+############ PROCESSING PARAMETERS #################
+Timeout={{ zabbix_agent__timeout }}
+
+UnsafeUserParameters={{ zabbix_agent__unsafe_userparameters }}
+
+EnableRemoteCommands={{ zabbix_agent__enable_remote_commands }}
+LogRemoteCommands={{ zabbix_agent__log_remote_commands }}

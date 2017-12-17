@@ -68,6 +68,16 @@ zabbix_agent__log_file: '{{ zabbix_common__log_directory }}/zabbix_agent.log'
 #	0 - disable automatic log rotation.
 zabbix_agent__log_size: 1
 
+# DebugLevel
+#	Specifies debug level:
+#	0 - basic information about starting and stopping of Zabbix processes
+#	1 - critical information
+#	2 - error information
+#	3 - warnings
+#	4 - for debugging (produces lots of information)
+#	5 - extended debugging (produces even more information)
+# Range: 0-5
+zabbix_agent__debug_level: 3
 
 ############ NETWORK PARAMETERS #################
 # ListenIP
@@ -112,3 +122,28 @@ zabbix_agent__hostname: '{{ ansible_fqdn }}'
 #	Item used for generating Hostname if it is undefined. Ignored if Hostname is defined.
 #	Does not support UserParameters or aliases.
 zabbix_agent__hostname_item: system.hostname
+
+
+############ PROCESSING PARAMETERS #################
+# Timeout
+#	Spend no more than Timeout seconds on processing items
+zabbix_agent__timeout: 5
+
+# UnsafeUserParameters
+#	Allow all characters to be passed in arguments to user-defined parameters.
+#	The following characters are not allowed:
+#	  \ ' " ` * ? [ ] { } ~ $ ! & ; ( ) < > | # @
+#	Additionally, newline characters are not allowed.
+#	0 - do not allow, 1 - allow
+zabbix_agent__unsafe_userparameters: 0
+
+# EnableRemoteCommands
+#	Whether remote commands from Zabbix server are allowed.
+#	0 - not allowed, 1 - allowed
+# EnableRemoteCommands=0
+zabbix_agent__enable_remote_commands: 0
+
+# LogRemoteCommands
+#	Enable logging of executed shell commands as warnings.
+#	0 - disabled, 1 - enabled
+zabbix_agent__log_remote_commands: 1
