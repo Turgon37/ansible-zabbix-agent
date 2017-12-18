@@ -127,7 +127,7 @@ zabbix_agent__hostname_item: system.hostname
 ############ PROCESSING PARAMETERS #################
 # Timeout
 #	Spend no more than Timeout seconds on processing items
-zabbix_agent__timeout: 5
+zabbix_agent__timeout: 3
 
 # UnsafeUserParameters
 #	Allow all characters to be passed in arguments to user-defined parameters.
