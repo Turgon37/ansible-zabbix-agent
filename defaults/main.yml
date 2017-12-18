@@ -147,3 +147,8 @@ zabbix_agent__enable_remote_commands: 0
 #	Enable logging of executed shell commands as warnings.
 #	0 - disabled, 1 - enabled
 zabbix_agent__log_remote_commands: 1
+
+
+############ COMMON USERPARAMETER  PARAMETERS #################
+# List of block device name to exclude from device discovery
+zabbix_agent__common_devices_discovery_excludes: []
