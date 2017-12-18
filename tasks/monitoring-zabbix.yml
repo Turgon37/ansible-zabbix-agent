@@ -10,7 +10,7 @@
       userparameter:
         - key: conntrack.count
           command: >
-            /bin/bash -c "if [ -f /proc/net/ip_conntrack ]; then wc -l /proc/net/ip_conntrack | awk '{print $1}'; else echo -n 0; fi"
+            /bin/bash -c "if [ -f /proc/net/ip_conntrack ]; then wc -l < /proc/net/ip_conntrack; else echo -n 0; fi"
           sudo: True
           comment: 'fetch current conntrack size'
         - key: conntrack.max
