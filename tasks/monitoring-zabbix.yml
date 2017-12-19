@@ -16,17 +16,17 @@
     zabbix_common__userparameter:
       name: common
       userparameter:
-        - key: conntrack.count
+        - key: common.conntrack.count
           command: >
             /bin/bash -c "if [ -f /proc/net/ip_conntrack ]; then wc -l < /proc/net/ip_conntrack; else echo -n 0; fi"
           sudo: True
           comment: 'fetch current conntrack size'
-        - key: conntrack.max
+        - key: common.conntrack.max
           command: >
             /bin/bash -c "VALUE=$(/sbin/sysctl net.ipv4.netfilter.ip_conntrack_max --ignore | awk '{print $3}'); echo ${VALUE:-0}"
           sudo: True
           comment: 'fetch maximum size of conntrack'
-        - key: disk.discovery
+        - key: common.disk.discovery
           command: "{{ zabbix_agent__custom_scripts_directory|d('/opt/zabbix-agent-scripts') }}/common_devices_discovery.py{% for e in zabbix_agent__common_devices_discovery_excludes %} --exclude {{ e }}{% endfor %}"
           comment: 'discovery for block devices'
       state: present
