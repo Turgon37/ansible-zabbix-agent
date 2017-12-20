@@ -23,6 +23,9 @@
           command: /bin/bash -c "VALUE=$(/sbin/sysctl net.ipv4.netfilter.ip_conntrack_max --ignore | awk '{print $3}'); echo ${VALUE:-0}"
           comment: 'fetch maximum size of conntrack'
         - key: common.disk.discovery
-          command: "{{ zabbix_agent__custom_scripts_directory|d('/opt/zabbix-agent-scripts') }}/common_devices_discovery.py{% for e in zabbix_agent__common_devices_discovery_excludes %} --exclude {{ e }}{% endfor %}"
+          command: >
+            {{ zabbix_agent__custom_scripts_directory|d('/opt/zabbix-agent-scripts') }}/common_devices_discovery.py
+            {% for e in zabbix_agent__common_devices_discovery_exclude_names %} --exclude {{ e }}{% endfor %}
+            {% for e in zabbix_agent__common_devices_discovery_exclude_patterns %} --exclude-pattern '{{ e }}'{% endfor %}
           comment: 'discovery for block devices'
       state: present

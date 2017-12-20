@@ -151,4 +151,7 @@ zabbix_agent__log_remote_commands: 1
 
 ############ COMMON USERPARAMETER  PARAMETERS #################
 # List of block device name to exclude from device discovery
-zabbix_agent__common_devices_discovery_excludes: []
+zabbix_agent__common_devices_discovery_exclude_names: []
+
+# List of regular expressions to use as pattern for device name exclusions
+zabbix_agent__common_devices_discovery_exclude_patterns: []
