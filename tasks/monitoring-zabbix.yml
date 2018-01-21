@@ -16,7 +16,7 @@
     zabbix_common__userparameter:
       name: utils
       userparameter:
-        - key: common.curl[*]
+        - key: utils.curl[*]
           command: >
             curl $3 --silent --write-out '|%{http_code}' "$1"
             | awk -F'|'
