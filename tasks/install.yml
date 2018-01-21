@@ -1,0 +1,7 @@
+---
+
+- name: Install required packages
+  package: 
+    name:  '{{ item }}'
+    state: present
+  with_items: '{{ zabbix_agent__packages_name }}'
