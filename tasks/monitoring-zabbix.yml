@@ -19,6 +19,7 @@
         - key: utils.curl[*]
           command: >
             curl $3 --silent --write-out '|%{http_code}' "$1"
+            | tr -d '\n'
             | awk -F'|'
             'function in_array(it, arr, x, y) { for (x in arr) y[arr[x]]; return it in y }
             BEGIN{  codes="$2"; if ( length(codes) == 0 ) { codes="200" }; split(codes, http_codes);  }
