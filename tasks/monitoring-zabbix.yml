@@ -22,7 +22,7 @@
             | tr -d '\n'
             | awk -F'|'
             'function in_array(it, arr, x, y) { for (x in arr) y[arr[x]]; return it in y }
-            BEGIN{  codes="$2"; if ( length(codes) == 0 ) { codes="200" }; split(codes, http_codes);  }
+            BEGIN{  codes="$2"; if ( length(codes) == 0 ) { codes="200" }; split(codes, http_codes, ",");  }
             {  if ( in_array($$2, http_codes) ) { print $$1 }  }'
           comment: $1 the url, $2 optional space separated list of success http codes, $3 optionnal parameter to pass to curl command
       state: present
