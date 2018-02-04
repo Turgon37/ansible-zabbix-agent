@@ -5,3 +5,4 @@
   service:
     name:  '{{ zabbix_agent__service_name }}'
     state: restarted
+  when: zabbix_agent__service_enabled|bool

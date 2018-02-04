@@ -1,0 +1,14 @@
+##
+## {{ ansible_managed }}
+##
+
+{% if zabbix_agent__userparameter.comment is defined %}
+# {{ zabbix_agent__userparameter.comment }}
+{% endif %}
+
+{% for userparameter in zabbix_agent__userparameter.userparameter|d([]) %}
+{% if userparameter.comment is defined %}
+# {{ userparameter.comment }}
+{% endif %}
+UserParameter={{ userparameter.key }},{% if userparameter.sudo|d(False)|bool %}sudo {% endif %}{{ userparameter.command }}
+{% endfor %}

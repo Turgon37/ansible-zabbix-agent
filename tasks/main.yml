@@ -2,17 +2,38 @@
 # tasks file for zabbix-agent
 
 - name: Include the OS specific variables
-  include_vars: "{{ item }}"
+  include_vars: '{{ item }}'
   with_first_found:
     - files:
-        - "{{ ansible_distribution }}-{{ ansible_distribution_version }}.yml"
-        - "{{ ansible_distribution }}.yml"
-        - "{{ ansible_os_family }}.yml"
-        - "defaults.yml"
+        - '{{ ansible_distribution }}-{{ ansible_distribution_version }}.yml'
+        - '{{ ansible_lsb.id|d(ansible_distribution) }}.yml'
+        - '{{ ansible_os_family }}.yml'
+        - defaults.yml
       skip: true
   tags: ['always']
 
 - import_tasks: init.yml
+  tags: ['always']
+
+- name: Run apt-backports
+  include_role:
+    name: apt-backports
+  when: ansible_distribution_release in ['jessie'] and zabbix_agent__packages_allow_backports|bool
+  tags: ['always']
+
+- name: Run zabbix-common
+  import_role:
+    name: zabbix-common
+  vars:
+    zabbix_common__version: '{{ zabbix_agent__version }}'
+    zabbix_common__packages_name: zabbix-agent
+    zabbix_common__service_name: '{{ zabbix_agent__service_name }}'
+    zabbix_common__service_handler: restart-zabbix-agent
+    zabbix_common__service_user: '{{ zabbix_agent__service_user }}'
+    zabbix_common__service_group: '{{ zabbix_agent__service_group }}'
+    zabbix_common__conf_directory: '{{ zabbix_agent__conf_directory }}'
+    zabbix_common__var_directory: '{{ zabbix_agent__var_directory }}'
+    zabbix_common__log_directory: '{{ zabbix_agent__log_directory }}'
   tags: ['always']
 
 - import_tasks: install.yml

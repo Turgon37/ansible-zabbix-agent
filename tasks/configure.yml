@@ -2,24 +2,32 @@
 
 - name: Make sure the configuration include directory exists
   file:
-    path:  '{{ zabbix_agent__conf_include_directory }}'
-    mode:  0755
-    state: directory
+    path:    '{{ item }}'
+    owner:   '{{ zabbix_agent__service_user }}'
+    group:   '{{ zabbix_agent__service_group }}'
+    mode:    0750
+    recurse: yes
+    state:   directory
+  with_items:
+    - '{{ zabbix_agent__conf_include_directory }}'
+    - '{{ zabbix_agent__userparameters_directory }}'
 
 - name: Create custom scripts directory
   file:
-    path:  '{{ zabbix_agent__custom_scripts_directory }}'
+    path:  '{{ item }}'
     owner: root
     group: root
     mode:  0755
     state: directory
+  with_items:
+    - '{{ zabbix_agent__custom_scripts_directory }}'
 
 - name: Update main configuration file
   template:
     src:   'zabbix_agentd.conf.j2'
     dest:  '{{ zabbix_agent__conf_file }}'
-    owner: root
-    group: '{{ zabbix_common__service_group }}'
+    owner: '{{ zabbix_agent__service_user }}'
+    group: '{{ zabbix_agent__service_group }}'
     mode:  0640
   notify: [ 'restart-zabbix-agent' ]
 
@@ -27,8 +35,8 @@
   lineinfile:
     path: /etc/sudoers
     state: present
-    regexp: '^{{ zabbix_common__service_user }} ALL='
-    line: '{{ zabbix_common__service_user }} ALL=(ALL) NOPASSWD: ALL'
+    regexp: '^{{ zabbix_agent__service_user }} ALL='
+    line: '{{ zabbix_agent__service_user }} ALL=(ALL) NOPASSWD: ALL'
     validate: 'visudo -cf %s'
   when: not zabbix_agent__sudo_use_sudoers_role|bool
 
@@ -39,7 +47,7 @@
   vars:
     sudoers__sudo_rule:
       name: zabbix_agent_01
-      users: '{{ zabbix_common__service_user }}'
+      users: '{{ zabbix_agent__service_user }}'
       hosts: ALL
       comment: 'Allow zabbix_agent to run any commands'
       commands:
@@ -48,6 +56,6 @@
           tags: NOPASSWD
       defaults:
         - defaults: '!requiretty'
-          user: '{{ zabbix_common__service_user }}'
+          user: '{{ zabbix_agent__service_user }}'
       state: present
   when: zabbix_agent__sudo_use_sudoers_role|bool

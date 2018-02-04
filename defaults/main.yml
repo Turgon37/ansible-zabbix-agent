@@ -14,17 +14,37 @@ zabbix_agent__version: 3.4
 zabbix_agent__packages_name:
   - curl
 
+# Try to enable this to get a more recent version
+zabbix_agent__packages_allow_backports: False
+
 # Name of zabbix service
 zabbix_agent__service_name: zabbix-agent
+zabbix_agent__service_enabled: True
+
+# User to run zabbix as
+zabbix_agent__service_user: zabbix
+# Group to run zabbix as
+zabbix_agent__service_group: '{{ zabbix_agent__service_user }}'
+
+# Configuration directory
+zabbix_agent__conf_directory: /etc/zabbix
 
 # Main configuration file
-zabbix_agent__conf_file: '{{ zabbix_common__conf_directory }}/zabbix_agentd.conf'
+zabbix_agent__conf_file: '{{ zabbix_agent__conf_directory }}/zabbix_agentd.conf'
 
 # Main include configuration directory
-zabbix_agent__conf_include_directory: '{{ zabbix_common__conf_directory }}/zabbix_agentd.conf.d'
+zabbix_agent__conf_include_directory: '{{ zabbix_agent__conf_directory }}/zabbix_agentd.conf.d'
+
+# directory for userparameters
+zabbix_agent__userparameters_directory: '{{ zabbix_agent__conf_directory }}/userparameters.d'
 
 # Where to place zabbix custom scripts
 zabbix_agent__custom_scripts_directory: /opt/zabbix-agent-scripts
+
+# Location of var directory for zabbix
+zabbix_agent__var_directory: /var/lib/zabbix
+# Location of logs for zabbix
+zabbix_agent__log_directory: /var/log/zabbix
 
 # Use special type provided by sudoers role to register sudo rights
 zabbix_agent__sudo_use_sudoers_role: False
@@ -65,7 +85,7 @@ zabbix_agent__conf_includes: []
 zabbix_agent__log_type: file
 
 # LogFile : Log file name for LogType 'file' parameter.
-zabbix_agent__log_file: '{{ zabbix_common__log_directory }}/zabbix_agent.log'
+zabbix_agent__log_file: '{{ zabbix_agent__log_directory }}/zabbix_agent.log'
 
 # LogFileSize
 #	Maximum size of log file in MB.

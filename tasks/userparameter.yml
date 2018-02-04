@@ -1,0 +1,28 @@
+---
+
+- name: Check if zabbix_agent__userparameter is defined
+  fail:
+    msg: You must pass the variable zabbix_agent__userparameter with rule specifications
+  when: zabbix_agent__userparameter is not defined
+
+- name: Ensure userparameters directory exists
+  file:
+    path:  '{{ zabbix_agent__userparameters_directory }}'
+    mode:  0750
+    state: directory
+  notify: [ 'restart-zabbix-agent' ]
+
+- name: 'Create userparameter {{ zabbix_agent__userparameter.name }}'
+  template:
+    src:  userparameter.j2
+    dest: '{{ zabbix_agent__userparameters_directory }}/{{ zabbix_agent__userparameter.name }}.conf'
+    mode: 0640
+  when: zabbix_agent__userparameter.state|d('present') == 'present'
+  notify: [ 'restart-zabbix-agent' ]
+
+- name: 'Remove userparameter {{ zabbix_agent__userparameter.name }}'
+  file:
+    path:  '{{ zabbix_agent__userparameters_directory }}/{{ zabbix_agent__userparameter.name }}.conf'
+    state: absent
+  when: zabbix_agent__userparameter.state|d('present') != 'present'
+  notify: [ 'restart-zabbix-agent' ]

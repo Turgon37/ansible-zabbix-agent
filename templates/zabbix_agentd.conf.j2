@@ -6,18 +6,22 @@
 ############ GENERAL PARAMETERS #################
 PidFile={{ zabbix_agent__pid_file }}
 
-Include={{ zabbix_agent__conf_include_directory }}/*.conf
-{% if zabbix_common__userparameters_directory is defined %}
-Include={{ zabbix_common__userparameters_directory }}/*.conf
+Include={{ zabbix_agent__conf_include_directory }}{{ '/*.conf' if zabbix_agent__version|version_compare(2.4, '>=') else '' }}
+{% if zabbix_agent__userparameters_directory is defined %}
+Include={{ zabbix_agent__userparameters_directory }}{{ '/*.conf' if zabbix_agent__version|version_compare(2.4, '>=') else '' }}
 {% endif %}
 {% for item in zabbix_agent__conf_includes %}
-Include={{ item }}
+Include={{ item if zabbix_agent__version|version_compare(2.4, '>=') else item|replace('/*.conf','') }}
 {% endfor %}
 
 AllowRoot=0
-User={{ zabbix_common__service_user }}
+{% if zabbix_agent__version|version_compare(2.4, '>=') %}
+User={{ zabbix_agent__service_user }}
+{% endif %}
 
+{% if zabbix_agent__version|version_compare(3.0, '>=') %}
 LogType={{ zabbix_agent__log_type }}
+{% endif %}
 LogFile={{ zabbix_agent__log_file }}
 LogFileSize={{ zabbix_agent__log_size|int }}
 DebugLevel={{zabbix_agent__debug_level }}

@@ -10,10 +10,10 @@
 
 - name: Add utilies userparameters
   include_role:
-    name: zabbix-common
+    name: zabbix-agent
     tasks_from: userparameter
   vars:
-    zabbix_common__userparameter:
+    zabbix_agent__userparameter:
       name: utils
       userparameter:
         - key: utils.curl[*]
@@ -29,10 +29,10 @@
 
 - name: Add common userparameters
   include_role:
-    name: zabbix-common
+    name: zabbix-agent
     tasks_from: userparameter
   vars:
-    zabbix_common__userparameter:
+    zabbix_agent__userparameter:
       name: common
       userparameter:
         - key: common.conntrack.count

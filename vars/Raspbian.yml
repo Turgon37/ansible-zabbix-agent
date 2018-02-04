@@ -1,0 +1,3 @@
+---
+
+zabbix_agent__version: '{{ 3.0 if zabbix_agent__packages_allow_backports|d(False) else 2.2 }}'
