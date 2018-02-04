@@ -1,16 +1,23 @@
 ---
 
-- name: Make sure the configuration include directory exists
+- name: Ensure some directories exists
   file:
     path:    '{{ item }}'
     owner:   '{{ zabbix_agent__service_user }}'
     group:   '{{ zabbix_agent__service_group }}'
     mode:    0750
-    recurse: yes
     state:   directory
   with_items:
     - '{{ zabbix_agent__conf_include_directory }}'
     - '{{ zabbix_agent__userparameters_directory }}'
+
+- name: Secure userparameters files
+  file:
+    path:    '{{ zabbix_agent__userparameters_directory }}'
+    owner:   '{{ zabbix_agent__service_user }}'
+    group:   '{{ zabbix_agent__service_group }}'
+    recurse: yes
+    state:   directory
 
 - name: Create custom scripts directory
   file:
