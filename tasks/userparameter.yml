@@ -1,9 +1,11 @@
 ---
 
-- name: Check if zabbix_agent__userparameter is defined
-  fail:
-    msg: You must pass the variable zabbix_agent__userparameter with rule specifications
-  when: zabbix_agent__userparameter is not defined
+- name: Check userparameter prerequisites
+  assert:
+    that:
+      - zabbix_agent__userparameter is defined
+      - zabbix_agent__userparameter.userparameters|d([])|length > 0
+    msg: zabbix_agent__userparameter must be defined with specifications, zabbix_agent__userparameter.userparameters must contains at least one item
 
 - name: Ensure userparameters directory exists
   file:
