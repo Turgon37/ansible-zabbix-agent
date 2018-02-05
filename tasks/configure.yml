@@ -43,7 +43,7 @@
     path: /etc/sudoers
     state: present
     regexp: '^{{ zabbix_agent__service_user }} ALL='
-    line: '{{ zabbix_agent__service_user }} ALL=(ALL) NOPASSWD: ALL'
+    line: '{{ zabbix_agent__service_user }} ALL=(ALL) NOPASSWD:ALL'
     validate: 'visudo -cf %s'
   when: not zabbix_agent__sudo_use_sudoers_role|bool
 
