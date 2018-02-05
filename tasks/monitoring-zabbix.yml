@@ -15,7 +15,7 @@
   vars:
     zabbix_agent__userparameter:
       name: utils
-      userparameter:
+      userparameters:
         - key: utils.curl[*]
           command: >
             curl $3 --silent --write-out '|%{http_code}' "$1"
@@ -34,7 +34,7 @@
   vars:
     zabbix_agent__userparameter:
       name: common
-      userparameter:
+      userparameters:
         - key: common.conntrack.count
           command: /bin/bash -c "if [ -f /proc/net/ip_conntrack ]; then wc -l < /proc/net/ip_conntrack; else echo -n 0; fi"
           comment: 'fetch current conntrack size'
