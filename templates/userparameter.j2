@@ -6,9 +6,9 @@
 # {{ zabbix_agent__userparameter.comment }}
 {% endif %}
 
-{% for userparameter in zabbix_agent__userparameter.userparameter|d([]) %}
+{% for userparameter in zabbix_agent__userparameter.userparameters|d([]) %}
 {% if userparameter.comment is defined %}
 # {{ userparameter.comment }}
 {% endif %}
-UserParameter={{ userparameter.key }},{% if userparameter.sudo|d(False)|bool %}sudo {% endif %}{{ userparameter.command }}
+UserParameter={{ userparameter.key }},{% if userparameter.sudo|d(False)|bool %}sudo{% if userparameter.sudo_user is defined %} --user={{ userparameter.sudo_user }}{% endif %}{% if userparameter.sudo_group is defined %} --group={{ userparameter.sudo_group }}{% endif %} {% endif %}{{ userparameter.command }}
 {% endfor %}
