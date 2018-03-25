@@ -52,9 +52,15 @@
   template:
     src:  userparameter.j2
     dest: "{{ zabbix_agent__userparameters_directory }}/{{ zabbix_agent__userparameter.name|lower|regex_replace('[^a-z0-9_-]', '_') }}.conf"
-    mode: 0640
   when: zabbix_agent__userparameter.state|d('present') == 'present'
+  register: _zabbix_agent__userparameter_template
   notify: [ 'restart-zabbix-agent' ]
+
+- name: Ensure temporary permission on user parameter file
+  file:
+    path: "{{ zabbix_agent__userparameters_directory }}/{{ zabbix_agent__userparameter.name|lower|regex_replace('[^a-z0-9_-]', '_') }}.conf"
+    mode: 0644
+  when: zabbix_agent__userparameter.state|d('present') == 'present' and _zabbix_agent__userparameter_template is changed
 
 - name: 'Remove userparameter {{ zabbix_agent__userparameter.name }}'
   file:
