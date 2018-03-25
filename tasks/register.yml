@@ -16,6 +16,7 @@
     login_user:     '{{ zabbix_agent__register_login_user }}'
     login_password: '{{ zabbix_agent__register_login_password }}'
   when: zabbix_agent__register_from_host == 'local'
+  tags: ['zabbix-agent', 'zabbix-agent-register']
 
 - name: Register zabbix agent from remote host
   zabbix_host:
@@ -33,3 +34,4 @@
     login_password: '{{ zabbix_agent__register_login_password }}'
   when: zabbix_agent__register_from_host != 'local'
   delegate_to: '{{ zabbix_agent__register_from_host }}'
+  tags: ['zabbix-agent', 'zabbix-agent-register']
