@@ -38,6 +38,10 @@ zabbix_agent__conf_include_directory: '{{ zabbix_agent__conf_directory }}/zabbix
 # directory for userparameters
 zabbix_agent__userparameters_directory: '{{ zabbix_agent__conf_directory }}/userparameters.d'
 
+# This directory contains some configuration files used by user parameter
+# you can put world readable file in this directory, they will be chmoded by this role once is applied
+zabbix_agent__userparameters_conf_directory: '{{ zabbix_agent__conf_directory }}/userparameters_config.d'
+
 # Where to place zabbix custom scripts
 zabbix_agent__custom_scripts_directory: /opt/zabbix-agent-scripts
 

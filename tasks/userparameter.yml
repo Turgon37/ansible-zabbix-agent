@@ -6,15 +6,37 @@
       - zabbix_agent__userparameter is defined
       - zabbix_agent__userparameter.userparameters|d([])|length > 0
     msg: zabbix_agent__userparameter must be defined with specifications, zabbix_agent__userparameter.userparameters must contains at least one item
+  tags: ['zabbix-agent', 'zabbix-agent-userparameter']
 
-- name: Ensure userparameters directory exists
+- name: Filter caracters in user parameter name
+  set_fact:
+    _zabbix_agent__userparameter_file_path: "{{ zabbix_agent__userparameters_directory }}/{{ zabbix_agent__userparameter.name|lower|regex_replace('[^a-z0-9_-]', '_') }}.conf"
+  tags: ['zabbix-agent', 'zabbix-agent-userparameter']
+
+# Ensure required folder before the full zabbix-agent role is applied
+
+- name: Ensure userparameters directories exists
   file:
-    path:  '{{ zabbix_agent__userparameters_directory }}'
-    mode:  0750
+    path:  '{{ item }}'
     state: directory
+  with_items:
+    - '{{ zabbix_agent__userparameters_directory }}'
+    - '{{ zabbix_agent__userparameters_conf_directory }}'
+  register: _zabbix_agent__userparameter_directory
   notify: [ 'restart-zabbix-agent' ]
+  tags: ['zabbix-agent', 'zabbix-agent-userparameter']
 
-# SUDO
+- name: Ensure temporary full permissions on newly created folder
+  file:
+    path:  '{{ item.item }}'
+    mode:  0755
+    state: directory
+  with_items: '{{ _zabbix_agent__userparameter_directory.results }}'
+  when: item is changed
+  tags: ['zabbix-agent', 'zabbix-agent-userparameter']
+
+# SUDO rules
+
 - name: Configure sudoers rights for zabbix-agent
   lineinfile:
     path:     /etc/sudoers
@@ -24,6 +46,7 @@
     state:    "{{ zabbix_agent__userparameter.state|d('present') }}"
   with_items: '{{ zabbix_agent__userparameter.userparameters|d([]) }}'
   when: not zabbix_agent__sudo_use_sudoers_role|bool and item.sudo|d(False)|bool
+  tags: ['zabbix-agent', 'zabbix-agent-userparameter']
 
 - name: Configure sudoers rights for zabbix-agent
   include_role:
@@ -46,25 +69,36 @@
       state: "{{ zabbix_agent__userparameter.state|d('present') }}"
   with_indexed_items: '{{ zabbix_agent__userparameter.userparameters|d([]) }}'
   when: zabbix_agent__sudo_use_sudoers_role|bool and item.1.sudo|d(False)|bool
+  tags: ['zabbix-agent', 'zabbix-agent-userparameter']
 
 # ZABBIX
+- name: Test if user parameter exists
+  stat:
+    path: '{{ _zabbix_agent__userparameter_file_path }}'
+  register: _zabbix_agent__userparameter_file_stat
+  tags: ['zabbix-agent', 'zabbix-agent-userparameter']
+
+- name: Ensure temporary permissions on user parameters file
+  file:
+    path:  '{{ _zabbix_agent__userparameter_file_path }}'
+    mode:  0644
+    state: touch
+  when: zabbix_agent__userparameter.state|d('present') == 'present' and not _zabbix_agent__userparameter_file_stat.stat.exists
+  tags: ['zabbix-agent', 'zabbix-agent-userparameter']
+
 - name: 'Create userparameter {{ zabbix_agent__userparameter.name }}'
   template:
     src:  userparameter.j2
-    dest: "{{ zabbix_agent__userparameters_directory }}/{{ zabbix_agent__userparameter.name|lower|regex_replace('[^a-z0-9_-]', '_') }}.conf"
+    dest: '{{ _zabbix_agent__userparameter_file_path }}'
   when: zabbix_agent__userparameter.state|d('present') == 'present'
   register: _zabbix_agent__userparameter_template
   notify: [ 'restart-zabbix-agent' ]
+  tags: ['zabbix-agent', 'zabbix-agent-userparameter']
 
-- name: Ensure temporary permission on user parameter file
-  file:
-    path: "{{ zabbix_agent__userparameters_directory }}/{{ zabbix_agent__userparameter.name|lower|regex_replace('[^a-z0-9_-]', '_') }}.conf"
-    mode: 0644
-  when: zabbix_agent__userparameter.state|d('present') == 'present' and _zabbix_agent__userparameter_template is changed
-
-- name: 'Remove userparameter {{ zabbix_agent__userparameter.name }}'
+- name: 'Remove userparameter {{ zabbix_agent__userparameter.name }} if needed'
   file:
     path:  "{{ zabbix_agent__userparameters_directory }}/{{ zabbix_agent__userparameter.name|lower|regex_replace('[^a-z0-9_-]', '_') }}.conf"
     state: absent
   when: zabbix_agent__userparameter.state|d('present') != 'present'
   notify: [ 'restart-zabbix-agent' ]
+  tags: ['zabbix-agent', 'zabbix-agent-userparameter']
