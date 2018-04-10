@@ -8,7 +8,7 @@
     msg: zabbix_agent__userparameter must be defined with specifications, zabbix_agent__userparameter.userparameters must contains at least one item
   tags: ['zabbix-agent', 'zabbix-agent-userparameter']
 
-- name: Filter caracters in user parameter name
+- name: Filter characters in user parameter name
   set_fact:
     _zabbix_agent__userparameter_file_path: "{{ zabbix_agent__userparameters_directory }}/{{ zabbix_agent__userparameter.name|lower|regex_replace('[^a-z0-9_-]', '_') }}.conf"
   tags: ['zabbix-agent', 'zabbix-agent-userparameter']
