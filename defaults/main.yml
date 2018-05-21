@@ -11,7 +11,7 @@ zabbix_agent__facts: False
 zabbix_agent__version: 3.4
 
 # List of required packages to install
-zabbix_agent__packages_name:
+zabbix_agent__required_packages_names:
   - curl
 
 # Try to enable this to get a more recent version

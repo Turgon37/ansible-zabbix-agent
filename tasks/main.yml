@@ -21,6 +21,9 @@
   when: ansible_distribution_release in ['jessie'] and zabbix_agent__packages_allow_backports|bool
   tags: ['zabbix-agent', 'zabbix-agent-install']
 
+- import_tasks: install.yml
+  tags: ['zabbix-agent', 'zabbix-agent-install']
+
 - name: Run zabbix-common
   import_role:
     name: zabbix-common
@@ -34,9 +37,6 @@
     zabbix_common__conf_directory: '{{ zabbix_agent__conf_directory }}'
     zabbix_common__var_directory: '{{ zabbix_agent__var_directory }}'
     zabbix_common__log_directory: '{{ zabbix_agent__log_directory }}'
-  tags: ['zabbix-agent', 'zabbix-agent-install']
-
-- import_tasks: install.yml
   tags: ['zabbix-agent', 'zabbix-agent-install']
 
 - import_tasks: configure.yml

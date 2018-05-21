@@ -4,4 +4,4 @@
   package: 
     name:  '{{ item }}'
     state: present
-  with_items: '{{ zabbix_agent__packages_name }}'
+  with_items: '{{ zabbix_agent__required_packages_names }}'

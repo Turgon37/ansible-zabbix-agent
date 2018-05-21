@@ -22,9 +22,12 @@ User={{ zabbix_agent__service_user }}
 {% if zabbix_agent__version is version_compare(3.0, '>=') %}
 LogType={{ zabbix_agent__log_type }}
 {% endif %}
+{% if zabbix_agent__log_type == 'file' %}
 LogFile={{ zabbix_agent__log_file }}
 LogFileSize={{ zabbix_agent__log_size|int }}
+{% endif %}
 DebugLevel={{zabbix_agent__debug_level }}
+
 
 ############ NETWORK PARAMETERS #################
 ListenIP={{ zabbix_agent__listen_ip }}
