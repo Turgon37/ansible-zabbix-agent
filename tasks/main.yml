@@ -45,7 +45,7 @@
 - import_tasks: service.yml
   tags: ['zabbix-agent', 'zabbix-agent-service']
 
-- import_tasks: monitoring-zabbix.yml
+- import_tasks: monitoring/zabbix.yml
   tags: ['zabbix-agent', 'zabbix-agent-monitoring']
 
 - include_tasks: register.yml

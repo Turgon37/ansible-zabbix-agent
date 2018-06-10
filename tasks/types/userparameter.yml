@@ -72,6 +72,7 @@
   tags: ['zabbix-agent', 'zabbix-agent-userparameter']
 
 # ZABBIX
+
 - name: Test if user parameter exists
   stat:
     path: '{{ _zabbix_agent__userparameter_file_path }}'
