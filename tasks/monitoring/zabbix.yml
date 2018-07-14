@@ -9,7 +9,7 @@
     mode:  0755
 
 - name: Add userparameters tools
-  include_tasks: types/userparameter.yml
+  include_tasks: types/user_parameter.yml
   vars:
     zabbix_agent__userparameter:
       name: utils
@@ -26,7 +26,7 @@
       state: present
 
 - name: Add common userparameters
-  include_tasks: types/userparameter.yml
+  include_tasks: types/user_parameter.yml
   vars:
     zabbix_agent__userparameter:
       name: common
