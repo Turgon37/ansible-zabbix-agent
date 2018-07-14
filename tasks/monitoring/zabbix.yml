@@ -8,8 +8,8 @@
     group: root
     mode:  0755
 
-- name: Add utilies userparameters
-  include_tasks: userparameter.yml
+- name: Add userparameters tools
+  include_tasks: types/userparameter.yml
   vars:
     zabbix_agent__userparameter:
       name: utils
@@ -26,7 +26,7 @@
       state: present
 
 - name: Add common userparameters
-  include_tasks: userparameter.yml
+  include_tasks: types/userparameter.yml
   vars:
     zabbix_agent__userparameter:
       name: common

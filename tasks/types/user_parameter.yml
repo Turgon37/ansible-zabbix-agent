@@ -51,7 +51,7 @@
 - name: Configure sudoers rights for zabbix-agent
   include_role:
     name: sudoers
-    tasks_from: sudo_rule
+    tasks_from: types/sudo_rule
   vars:
     sudoers__sudo_rule:
       name:    'zabbix_agent_10_{{ zabbix_agent__userparameter.name }}_{{ item.0 }}'
