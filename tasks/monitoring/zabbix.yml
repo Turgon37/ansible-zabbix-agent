@@ -43,4 +43,11 @@
             {% for e in zabbix_agent__common_devices_discovery_exclude_names %} --exclude {{ e }}{% endfor %}
             {% for e in zabbix_agent__common_devices_discovery_exclude_patterns %} --exclude-pattern '{{ e }}'{% endfor %}
           comment: 'discovery for block devices'
+        - key: common.users.password.last_change_timestamp[*]
+          command: /usr/bin/passwd --status $1 2>&1 | awk '{ if (match($$3, /^[0-9-]+$/)) { print $$3 } else { print "ZBX_NOTSUPPORTED" > "/dev/stderr" } }' | date -f - +%s
+          sudo_user: root
+          sudo_group: root
+          sudo_command: /usr/bin/passwd --status [a-zA-Z-]*
+          sudo: true
+          comment: return the timestamp of the last password change for the given user
       state: present
