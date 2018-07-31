@@ -1,12 +1,19 @@
 ---
 
+- name: Remove previous file
+  file:
+    path: "{{ zabbix_agent__custom_scripts_directory|d('/opt/zabbix-agent-scripts') }}/common_devices_discovery.py"
+    state: absent
+  tags: ['zabbix-agent', 'zabbix-agent-monitoring']
+
 - name: Install block device discovery script file
   copy:
-    src:   devices.discovery.py
-    dest:  "{{ zabbix_agent__custom_scripts_directory|d('/opt/zabbix-agent-scripts') }}/common_devices_discovery.py"
+    src: block_devices.discovery.py
+    dest:  "{{ zabbix_agent__custom_scripts_directory|d('/opt/zabbix-agent-scripts') }}/common_block_devices_discovery.py"
     owner: root
     group: root
     mode:  0755
+  tags: ['zabbix-agent', 'zabbix-agent-monitoring']
 
 - name: Add userparameters tools
   include_tasks: types/user_parameter.yml
@@ -24,6 +31,7 @@
             {  if ( in_array($$2, http_codes) ) { print $$1 }  }'
           comment: $1 the url, $2 optional space separated list of success http codes, $3 optionnal parameter to pass to curl command
       state: present
+  tags: ['zabbix-agent', 'zabbix-agent-monitoring']
 
 - name: Add common userparameters
   include_tasks: types/user_parameter.yml
@@ -37,9 +45,9 @@
         - key: common.conntrack.max
           command: /bin/bash -c "VALUE=$(/sbin/sysctl net.ipv4.netfilter.ip_conntrack_max --ignore | awk '{print $3}'); echo ${VALUE:-0}"
           comment: 'fetch maximum size of conntrack'
-        - key: common.disk.discovery
+        - key: common.block_devices.discovery
           command: >
-            {{ zabbix_agent__custom_scripts_directory|d('/opt/zabbix-agent-scripts') }}/common_devices_discovery.py
+            {{ zabbix_agent__custom_scripts_directory|d('/opt/zabbix-agent-scripts') }}/common_block_devices_discovery.py
             {% for e in zabbix_agent__common_devices_discovery_exclude_names %} --exclude {{ e }}{% endfor %}
             {% for e in zabbix_agent__common_devices_discovery_exclude_patterns %} --exclude-pattern '{{ e }}'{% endfor %}
           comment: 'discovery for block devices'
@@ -51,3 +59,4 @@
           sudo: true
           comment: return the timestamp of the last password change for the given user
       state: present
+  tags: ['zabbix-agent', 'zabbix-agent-monitoring']
