@@ -54,9 +54,6 @@
   when: not zabbix_agent__sudo_use_sudoers_role|bool and item.sudo|d(False)|bool
   tags: ['zabbix-agent', 'zabbix-agent-userparameter']
 
-- debug:
-    var: "zabbix_agent__userparameter.userparameters|d([])|list"
-
 - name: Configure sudoers rights for zabbix-agent
   include_role:
     name: sudoers
