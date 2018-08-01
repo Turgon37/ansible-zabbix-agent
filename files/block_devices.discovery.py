@@ -64,9 +64,9 @@ for device_name in os.listdir(default_sys_block_path):
                 device['model'] = f_model.readline().strip()
         except IOError as ex:
             if args.debug:
-                sys.stderr.write('unable to open device model file {} : {}\n',
+                sys.stderr.write('unable to open device model file {} : {}\n'.format(
                                  device_model_file,
-                                 str(ex))
+                                 str(ex)))
 
     device_size_file = os.path.join(default_sys_block_path, device_name, 'size')
     if os.path.isfile(device_size_file):
@@ -75,13 +75,13 @@ for device_name in os.listdir(default_sys_block_path):
                 device['size'] = int(f_size.readline().strip())
         except (IOError,ValueError) as ex:
             if args.debug:
-                sys.stderr.write('unable to open device size file {} : {}\n',
+                sys.stderr.write('unable to open device size file {} : {}\n'.format(
                                  device_size_file,
-                                 str(ex))
+                                 str(ex)))
 
         if device['size'] == 0 and not args.allow_empty:
             if args.debug:
-                 sys.stderr.write("ignoring device %s, its size is 0\n" % device_name)
+                 sys.stderr.write('ignoring device {}, its size is 0\n'.format(device_name))
             continue
 
     devices.append(device)

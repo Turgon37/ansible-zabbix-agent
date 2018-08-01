@@ -2,17 +2,25 @@
 
 - name: Remove previous file
   file:
-    path: "{{ zabbix_agent__custom_scripts_directory|d('/opt/zabbix-agent-scripts') }}/common_devices_discovery.py"
+    path: "{{ zabbix_agent__custom_scripts_directory|d('/opt/zabbix-agent-scripts') }}/{{ item }}"
     state: absent
+  with_items:
+    - common_devices_discovery.py
+    - common_block_devices_discovery.py
   tags: ['zabbix-agent', 'zabbix-agent-monitoring']
 
-- name: Install block device discovery script file
+- name: Install zabbix scripts files
   copy:
-    src: block_devices.discovery.py
-    dest:  "{{ zabbix_agent__custom_scripts_directory|d('/opt/zabbix-agent-scripts') }}/common_block_devices_discovery.py"
+    src: '{{ item.src }}'
+    dest: "{{ zabbix_agent__custom_scripts_directory|d('/opt/zabbix-agent-scripts') }}/{{ item.dest }}"
     owner: root
     group: root
-    mode:  0755
+    mode: 0755
+  with_items:
+    - src: block_devices.discovery.py
+      dest: linux_block_devices_discovery.py
+    - src: dmesg.py
+      dest: linux_dmesg.py
   tags: ['zabbix-agent', 'zabbix-agent-monitoring']
 
 - name: Add userparameters tools
@@ -40,18 +48,34 @@
       name: common
       userparameters:
         - key: common.conntrack.count
+          command: /bin/true
+      state: absent
+
+- name: Add linux userparameters
+  include_tasks: types/user_parameter.yml
+  vars:
+    zabbix_agent__userparameter:
+      name: linux
+      userparameters:
+        - key: linux.conntrack.count
           command: /bin/bash -c "if [ -f /proc/net/ip_conntrack ]; then wc -l < /proc/net/ip_conntrack; else echo -n 0; fi"
           comment: 'fetch current conntrack size'
-        - key: common.conntrack.max
+        - key: linux.conntrack.max
           command: /bin/bash -c "VALUE=$(/sbin/sysctl net.ipv4.netfilter.ip_conntrack_max --ignore | awk '{print $3}'); echo ${VALUE:-0}"
           comment: 'fetch maximum size of conntrack'
-        - key: common.block_devices.discovery
-          command: >
-            {{ zabbix_agent__custom_scripts_directory|d('/opt/zabbix-agent-scripts') }}/common_block_devices_discovery.py
+        - key: linux.block_devices.discovery
+          command: >-
+            {{ zabbix_agent__custom_scripts_directory|d('/opt/zabbix-agent-scripts') }}/block_devices_discovery.py
             {% for e in zabbix_agent__common_devices_discovery_exclude_names %} --exclude {{ e }}{% endfor %}
             {% for e in zabbix_agent__common_devices_discovery_exclude_patterns %} --exclude-pattern '{{ e }}'{% endfor %}
-          comment: 'discovery for block devices'
-        - key: common.users.password.last_change_timestamp[*]
+          comment: discovery for block devices
+        - key: linux.kernel_log
+          command: >-
+            {{ zabbix_agent__custom_scripts_directory|d('/opt/zabbix-agent-scripts') }}/linux_dmesg.py
+            --var-directory {{ zabbix_agent__var_directory }}
+            --filter-older-than 86400
+          comment: parse kernel log for error
+        - key: linux.users.password.last_change_timestamp[*]
           command: /usr/bin/passwd --status $1 2>&1 | awk '{ if (match($$3, /^[\/0-9-]+$/)) { print $$3 } else { print "ZBX_NOTSUPPORTED" > "/dev/stderr" } }' | date -f - +%s
           sudo_user: root
           sudo_group: root
