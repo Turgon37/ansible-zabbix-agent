@@ -71,5 +71,5 @@
       defaults:
         - defaults: '!requiretty'
           user: '{{ zabbix_agent__service_user }}'
-      state: present
+      state: absent
   when: zabbix_agent__sudo_use_sudoers_role|bool

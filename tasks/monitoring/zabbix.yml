@@ -7,6 +7,7 @@
   with_items:
     - common_devices_discovery.py
     - common_block_devices_discovery.py
+    - common_dmesg.py
   tags: ['zabbix-agent', 'zabbix-agent-monitoring']
 
 - name: Install zabbix scripts files
@@ -41,15 +42,17 @@
       state: present
   tags: ['zabbix-agent', 'zabbix-agent-monitoring']
 
-- name: Add common userparameters
+- name: Add linux userparameters
   include_tasks: types/user_parameter.yml
   vars:
     zabbix_agent__userparameter:
       name: common
       userparameters:
         - key: common.conntrack.count
-          command: /bin/true
+          command: /bin/bash -c "if [ -f /proc/net/ip_conntrack ]; then wc -l < /proc/net/ip_conntrack; else echo -n 0; fi"
+          comment: 'fetch current conntrack size'
       state: absent
+  tags: ['zabbix-agent', 'zabbix-agent-monitoring']
 
 - name: Add linux userparameters
   include_tasks: types/user_parameter.yml
@@ -59,26 +62,29 @@
       userparameters:
         - key: linux.conntrack.count
           command: /bin/bash -c "if [ -f /proc/net/ip_conntrack ]; then wc -l < /proc/net/ip_conntrack; else echo -n 0; fi"
-          comment: 'fetch current conntrack size'
+          comment: fetch current conntrack size
         - key: linux.conntrack.max
           command: /bin/bash -c "VALUE=$(/sbin/sysctl net.ipv4.netfilter.ip_conntrack_max --ignore | awk '{print $3}'); echo ${VALUE:-0}"
-          comment: 'fetch maximum size of conntrack'
+          comment: fetch maximum size of conntrack
         - key: linux.block_devices.discovery
           command: >-
             {{ zabbix_agent__custom_scripts_directory|d('/opt/zabbix-agent-scripts') }}/block_devices_discovery.py
             {% for e in zabbix_agent__common_devices_discovery_exclude_names %} --exclude {{ e }}{% endfor %}
             {% for e in zabbix_agent__common_devices_discovery_exclude_patterns %} --exclude-pattern '{{ e }}'{% endfor %}
           comment: discovery for block devices
-        - key: linux.kernel_log
+        - key: linux.kernel_log_errors
           command: >-
-            {{ zabbix_agent__custom_scripts_directory|d('/opt/zabbix-agent-scripts') }}/linux_dmesg.py
+            /usr/bin/env dmesg | {{ zabbix_agent__custom_scripts_directory|d('/opt/zabbix-agent-scripts') }}/linux_dmesg.py
+            --source-format dmesg
             --var-directory {{ zabbix_agent__var_directory }}
             --filter-older-than 86400
           comment: parse kernel log for error
+          sudo_user: root
+          sudo_command: /usr/bin/env dmesg
+          sudo: true
         - key: linux.users.password.last_change_timestamp[*]
           command: /usr/bin/passwd --status $1 2>&1 | awk '{ if (match($$3, /^[\/0-9-]+$/)) { print $$3 } else { print "ZBX_NOTSUPPORTED" > "/dev/stderr" } }' | date -f - +%s
           sudo_user: root
-          sudo_group: root
           sudo_command: /usr/bin/passwd --status [a-zA-Z-]*
           sudo: true
           comment: return the timestamp of the last password change for the given user

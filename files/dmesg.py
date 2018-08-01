@@ -5,7 +5,6 @@
 
 import argparse
 import fcntl
-import json
 import os
 try:
     import cPickle as pickle
@@ -13,8 +12,10 @@ except ImportError:
     import pickle
 import re
 import stat
-import subprocess
 import sys
+
+# globals
+re_klog_line = re.compile(r"\[\s*(?P<timestamp>\d+\.\d+)\]\s+(?P<message>.*)$")
 
 #
 # Tools functions
@@ -103,7 +104,7 @@ def parseKernelLog(raw):
     Args:
         raw : the raw log message as a string
     Returns:
-        {}
+        {level, sequence, timestamp, message} message
         None on format error
     """
     # split line in header and body
@@ -128,13 +129,20 @@ def parseKernelLog(raw):
 def parseDmesgLog(raw):
     """
 
-    # this regexp describe each line in kernel log
+
     # [80508.690871] kauditd_printk_skb: 2 callbacks suppressed
-   #re_klog_line = re.compile(r"^(?P<header>(?P (?P<timestamp>\d+\.\d+)) (?P<message>.*)$")
     """
-    pass
-
-
+    # this regexp describe each line in kernel log
+    match = re_klog_line.match(raw)
+    if not match:
+        return None
+    try:
+        return dict(
+            timestamp=float(match.group('timestamp')),
+            message=match.group('message'),
+        )
+    except:
+        return None
 
 #
 # command line handler
@@ -150,6 +158,12 @@ parser.add_argument('--kernel-log',
                     action='store',
                     dest='kernel_log',
                     default='/dev/kmsg')
+parser.add_argument('--source-format',
+                    help='Choose the source format',
+                    action='store',
+                    choices=['kmsg', 'dmesg'],
+                    dest='source_format',
+                    default='kmsg')
 parser.add_argument('--filter-older-than',
                     help='do not considers message older than given seconds',
                     action='store',
@@ -210,6 +224,14 @@ total_lines = 0
 valid_lines = 0
 treated_lines = 0
 last_timestamp = status_data['last_timestamp']
+if args.source_format == 'kmsg':
+    parse_function = parseKernelLog
+elif args.source_format == 'dmesg':
+    parse_function = parseDmesgLog
+else:
+    printError('invalid parse format')
+    sys.exit(1)
+
 
 # parse all lines
 while True:
@@ -218,7 +240,7 @@ while True:
         break
 
     total_lines += 1
-    message = parseKernelLog(line)
+    message = parse_function(line)
     if not message:
         continue
 
@@ -247,5 +269,7 @@ if args.debug:
                treated_lines,
                valid_lines,
                total_lines))
+    if valid_lines == 0 and total_lines > 0:
+        printDebug('no any line was treated, is source format valid ?')
 
 sys.exit(0)
