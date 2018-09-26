@@ -87,7 +87,7 @@ for device_name in os.listdir(default_sys_block_path):
     devices.append(device)
 
 # format data for zabbix
-data = map(lambda d: dict(map(lambda x: ("{BLOCKDEVICE"+x[0].upper()+"}", x[1]), d.items())), devices)
+data = map(lambda d: dict(map(lambda x: ("{#BLOCKDEVICE"+x[0].upper()+"}", x[1]), d.items())), devices)
 
 # output
 if args.debug:
