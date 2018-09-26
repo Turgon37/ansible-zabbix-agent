@@ -9,6 +9,7 @@
     - common_block_devices_discovery.py
     - common_dmesg.py
     - linux_dmesg.py
+    - kernel_log.py
   tags: ['zabbix-agent', 'zabbix-agent-monitoring']
 
 - name: Install zabbix scripts files
@@ -19,10 +20,10 @@
     group: root
     mode: 0755
   with_items:
-    - src: block_devices.discovery.py
+    - src: linux/block_devices.discovery.py
       dest: linux_block_devices_discovery.py
-    - src: kernel_log.py
-      dest: kernel_log.py
+    - src: linux/kernel_log.py
+      dest: linux_kernel_log.py
   tags: ['zabbix-agent', 'zabbix-agent-monitoring']
 
 - name: Add userparameters tools
@@ -69,13 +70,13 @@
           comment: fetch maximum size of conntrack
         - key: linux.block_devices.discovery
           command: >-
-            {{ zabbix_agent__custom_scripts_directory|d('/opt/zabbix-agent-scripts') }}/block_devices_discovery.py
+            {{ zabbix_agent__custom_scripts_directory|d('/opt/zabbix-agent-scripts') }}/linux_block_devices_discovery.py
             {% for e in zabbix_agent__common_devices_discovery_exclude_names %} --exclude {{ e }}{% endfor %}
             {% for e in zabbix_agent__common_devices_discovery_exclude_patterns %} --exclude-pattern '{{ e }}'{% endfor %}
           comment: discovery for block devices
         - key: linux.kernel_log_errors
           command: >-
-            /usr/bin/env dmesg | {{ zabbix_agent__custom_scripts_directory|d('/opt/zabbix-agent-scripts') }}/kernel_log.py
+            /usr/bin/env dmesg | {{ zabbix_agent__custom_scripts_directory|d('/opt/zabbix-agent-scripts') }}/linux_kernel_log.py
             --source-format dmesg
             --var-directory {{ zabbix_agent__var_directory }}
             --filter-older-than 86400
